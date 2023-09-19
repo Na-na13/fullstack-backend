@@ -24,10 +24,17 @@ let persons = [
         name: "Mary Poppendick",
         number: "39-23-6423122"
     }
+
 ]
 
 app.get('/api/persons', (req, res) => {
     res.json(persons)
+})
+
+app.get('/info', (req, res) => {
+    const personCount = persons.length
+    const timestamp = new Date()
+    res.send(`<div><div>Phonebook has info for ${personCount}</div><div>${timestamp.toDateString()} ${timestamp.toTimeString()}</div></div>`)
 })
 
 const PORT = 3001
