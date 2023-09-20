@@ -1,4 +1,5 @@
 const express = require('express')
+const pluralize = require('pluralize')
 const app = express()
 
 app.use(express.json())
@@ -34,7 +35,12 @@ app.get('/api/persons', (req, res) => {
 app.get('/info', (req, res) => {
     const personCount = persons.length
     const timestamp = new Date()
-    res.send(`<div><div>Phonebook has info for ${personCount}</div><div>${timestamp.toDateString()} ${timestamp.toTimeString()}</div></div>`)
+    res.send(`
+        <div>
+            <div>Phonebook has info for ${personCount} ${pluralize('person', personCount)}</div>
+            <div>${timestamp.toDateString()} ${timestamp.toTimeString()}</div>
+        </div>
+    `)
 })
 
 app.get('/api/persons/:id', (req, res) => {
