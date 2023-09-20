@@ -59,6 +59,39 @@ app.delete('/api/persons/:id', (req, res) => {
     res.status(204).end()
 })
 
+const generateId = () => {
+    const idCount = persons.length
+    let generatedId = 1
+    while (persons.find(person => person.id === generatedId)) {
+        generatedId = Math.floor(Math.random() * idCount * 10)
+    }
+    console.log(generatedId)
+    return generatedId
+}
+
+app.post('/api/persons', (req, res) => {
+    const body = req.body
+    if (!body.name || !body.number) {
+        return res.status(400).json({
+            error: 'name or number missing'
+        })
+    }
+    if (persons.find(person => person.name === body.name)) {
+        return res.status(400).json({
+            error: 'name must be unique'
+        })
+    }
+
+    const person = {
+        name: body.name,
+        number: body.number,
+        id: generateId()
+    }
+
+    persons.concat(person)
+    res.json(persons)
+})
+
 const PORT = 3001
 app.listen(PORT)
 console.log(`Server is listening port ${PORT}`)
