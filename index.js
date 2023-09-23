@@ -4,7 +4,9 @@ const morgan = require('morgan')
 const app = express()
 
 app.use(express.json())
-app.use(morgan('tiny'))
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
+
+morgan.token('body', function(req, res) { return JSON.stringify(req.body) })
 
 let persons = [
     {
@@ -67,7 +69,6 @@ const generateId = () => {
     while (persons.find(person => person.id === generatedId)) {
         generatedId = Math.floor(Math.random() * idCount * 10)
     }
-    console.log(generatedId)
     return generatedId
 }
 
@@ -93,6 +94,7 @@ app.post('/api/persons', (req, res) => {
 
     persons.concat(person)
     res.json(persons)
+    
 })
 
 const PORT = 3001
