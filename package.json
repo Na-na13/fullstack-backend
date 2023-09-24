@@ -9,7 +9,6 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build:ui": "rm -rf build && cd ../fullstack/osa2/puhelinluettelo && cp -r build ../../../fullstack-backend",
     "deploy:full": "npm run build:ui && git add . && git commit -m'uibuild' && git push"
-
   },
   "author": "Nana Reinikainen",
   "license": "ISC",
@@ -19,6 +18,7 @@
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.18.2",
+    "mongoose": "^7.5.2",
     "morgan": "^1.10.0",
     "pluralize": "^8.0.0"
   }
