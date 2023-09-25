@@ -13,6 +13,16 @@ app.use(morgan(':method :url :status :res[content-length] - :response-time ms :b
 
 morgan.token('body', function(req, res) { return JSON.stringify(req.body) })
 
+const errorHandler = (error, req, res, next) => {
+    console.log(error)
+
+    if (error.name === 'CastError') {
+        return res.status(400).send({ error: 'malformatted id' })
+    }
+
+    next(error)
+}
+
 app.get('/api/persons', (req, res) => {
     Person.find({}).then(persons => {
         res.json(persons)
@@ -30,30 +40,25 @@ app.get('/info', (req, res) => {
     `)
 })
 
-app.get('/api/persons/:id', (req, res) => {
-    const id = Number(req.params.id)
-    const person = persons.find(person => person.id === id)
-    if (person) {
-        res.json(person)
-    } else {
-        res.status(404).end()
-    }
+app.get('/api/persons/:id', (req, res, next) => {
+    Person.findById(req.params.id)
+        .then(person => {
+            if (person) {
+                res.json(person)
+            } else {
+                res.status(404).end()
+            }
+        })
+        .catch(error => nex(error))
 })
 
-app.delete('/api/persons/:id', (req, res) => {
-    const id = Number(req.params.id)
-    persons = persons.filter(person => person.id !== id)
-    res.status(204).end()
+app.delete('/api/persons/:id', (req, res, next) => {
+    Person.findByIdAndDelete(req.params.id)
+        .then(result => {
+            res.status(204).end()
+        })
+        .catch(error => next(error))
 })
-
-const generateId = () => {
-    const idCount = persons.length
-    let generatedId = 1
-    while (persons.find(person => person.id === generatedId)) {
-        generatedId = Math.floor(Math.random() * idCount * 10)
-    }
-    return generatedId
-}
 
 app.post('/api/persons', (req, res) => {
     const body = req.body
@@ -79,6 +84,8 @@ app.post('/api/persons', (req, res) => {
     })
     
 })
+
+app.use(errorHandler)
 
 const PORT = process.env.PORT
 app.listen(PORT)
