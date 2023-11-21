@@ -8,11 +8,13 @@
     "dev": "nodemon index.js -L",
     "test": "echo \"Error: no test specified\" && exit 1",
     "build:ui": "rm -rf build && cd ../fullstack/osa2/puhelinluettelo && cp -r build ../../../fullstack-backend",
-    "deploy:full": "npm run build:ui && git add . && git commit -m'uibuild' && git push"
+    "deploy:full": "npm run build:ui && git add . && git commit -m'uibuild' && git push",
+    "lint": "eslint ."
   },
   "author": "Nana Reinikainen",
   "license": "ISC",
   "devDependencies": {
+    "eslint": "^8.54.0",
     "nodemon": "^3.0.1"
   },
   "dependencies": {
