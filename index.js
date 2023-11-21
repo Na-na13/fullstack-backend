@@ -53,21 +53,16 @@ app.delete('/api/persons/:id', (req, res, next) => {
 
 app.post('/api/persons', (req, res, next) => {
     const body = req.body
-    if (!body.name || !body.number) {
-        let error = Error('ContentError')
-        next(error)
-    } else {
-        const person = new Person({
-            name: body.name,
-            number: body.number,
-        })
+    const person = new Person({
+        name: body.name,
+        number: body.number,
+    })
 
-        person.save()
-            .then(savedPerson => {
-                res.json(savedPerson)
-            })
-            .catch(error => next(error))
-    }
+    person.save()
+        .then(savedPerson => {
+            res.json(savedPerson)
+        })
+        .catch(error => next(error))
 })
 
 app.put('/api/persons/:id', (req, res, next) => {
@@ -96,12 +91,8 @@ const errorHandler = (error, req, res, next) => {
         return res.status(400).send({ error: 'Malformatted id' })
     }
 
-    if (error.name === 'ValidationError') {
+    else if (error.name === 'ValidationError') {
         return res.status(400).send({ error: error.message })
-    }
-
-    if (error.message === 'ContentError') {
-        return res.status(400).send({ error: 'Name or number missing' })
     }
 
     next(error)
