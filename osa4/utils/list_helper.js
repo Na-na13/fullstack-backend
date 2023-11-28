@@ -18,30 +18,47 @@ const favoriteBlog = (blogs) => {
   })
 
   return {
-    "title": favorite.title, 
-    "author": favorite.author, 
+    "title": favorite.title,
+    "author": favorite.author,
     "likes": favorite.likes
   }
 }
 
 const mostBlogs = (blogs) => {
-    const most = _.chain(blogs)
-      .groupBy("author")
-      .mapValues(groupedBlogs => _.size(groupedBlogs))
-      .toPairs()
-      .orderBy([1], "desc")
-      .head()
-      .value()
+  const most = _.chain(blogs)
+    .groupBy("author")
+    .mapValues(groupedBlogs => _.size(groupedBlogs))
+    .toPairs()
+    .orderBy([1], "desc")
+    .head()
+    .value()
 
-    return {
-        "author": most[0],
-        "blogs": most[1]
-    }
+  return {
+    "author": most[0],
+    "blogs": most[1]
+  }
+}
+
+const mostLikes = (blogs) => {
+  const most = _.chain(blogs)
+    .groupBy("author")
+    .mapValues(groupedBlogs => _.sumBy(groupedBlogs, "likes"))
+    .toPairs()
+    .orderBy([1], "desc")
+    .head()
+    .value()
+
+  return {
+    "author": most[0],
+    "likes": most[1]
+  }
+
 }
 
 module.exports = {
   dummy,
   totalLikes,
   favoriteBlog,
-  mostBlogs
+  mostBlogs,
+  mostLikes
 }
