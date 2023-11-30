@@ -48,6 +48,25 @@ test('blog can be added', async () => {
   expect(titles).toContain('Swizec - A geek with a hat')
 })
 
+test('if no value is given to "likes", set to 0', async () => {
+  const newBlog = {
+    title: "Swizec - A geek with a hat",
+    author: "Swizec Teller",
+    url: "https://swizec.com/blog/",
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+
+  const response = await api.get('/api/blogs')
+
+  const blog = response.body.find(r => r.title === "Swizec - A geek with a hat")
+  expect(blog.likes).toBe(0)
+})
+
 afterAll(async () => {
   await mongoose.connection.close()
 })
