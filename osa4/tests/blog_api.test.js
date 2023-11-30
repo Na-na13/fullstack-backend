@@ -67,6 +67,38 @@ test('if no value is given to "likes", set to 0', async () => {
   expect(blog.likes).toBe(0)
 })
 
+test('if no value to "title" is given, through error code 400', async () => {
+  const newBlog = {
+    author: "Swizec Teller",
+    url: "https://swizec.com/blog/",
+    likes: 6
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(400)
+
+  const response = await api.get('/api/blogs')
+  expect(response.body).toHaveLength(helper.initialBlogs.length)
+})
+
+test('if no value to "url" is given, through error code 400', async () => {
+  const newBlog = {
+    title: "Swizec - A geek with a hat",
+    author: "Swizec Teller",
+    likes: 6
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(400)
+
+  const response = await api.get('/api/blogs')
+  expect(response.body).toHaveLength(helper.initialBlogs.length)
+})
+
 afterAll(async () => {
   await mongoose.connection.close()
 })
