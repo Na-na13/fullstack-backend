@@ -99,6 +99,20 @@ test('if no value to "url" is given, through error code 400', async () => {
   expect(response.body).toHaveLength(helper.initialBlogs.length)
 })
 
+test('blog can be deleted', async () => {
+  const blogsAtStart = await api.get('/api/blogs')
+  const blogToDelete = blogsAtStart.body[0]
+  await api
+    .delete(`/api/blogs/${blogToDelete.id}`)
+    .expect(204)
+
+  const blogsAtEnd = await api.get('/api/blogs')
+  expect(blogsAtEnd.body).toHaveLength(blogsAtStart.body.length - 1)
+
+  const titles = blogsAtEnd.body.map(b => b.title)
+  expect(titles).not.toContain(blogToDelete.title)
+})
+
 afterAll(async () => {
   await mongoose.connection.close()
 })
