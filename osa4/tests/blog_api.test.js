@@ -26,6 +26,28 @@ test('blog identifier is "id"', async () => {
   })
 })
 
+test('blog can be added', async () => {
+  const newBlog = {
+    title: "Swizec - A geek with a hat",
+    author: "Swizec Teller",
+    url: "https://swizec.com/blog/",
+    likes: 6
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+
+  const response = await api.get('/api/blogs')
+
+  const titles = response.body.map(r => r.title)
+
+  expect(response.body).toHaveLength(helper.initialBlogs.length + 1)
+  expect(titles).toContain('Swizec - A geek with a hat')
+})
+
 afterAll(async () => {
   await mongoose.connection.close()
 })
