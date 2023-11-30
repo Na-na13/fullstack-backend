@@ -4,9 +4,9 @@
   "description": "blogilistasovellus",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
-    "dev": "nodemon index.js -L",
-    "test": "jest --verbose"
+    "start": "cross-env NODE_ENV=production node index.js",
+    "dev": "cross-env NODE_ENV=developmnet index.js -L",
+    "test": "cross-env NODE_ENV=test jest --verbose --runInBand"
   },
   "author": "Nana Reinikainen",
   "license": "ISC",
@@ -18,8 +18,10 @@
     "mongoose": "^7.6.5"
   },
   "devDependencies": {
+    "cross-env": "^7.0.3",
     "jest": "^29.7.0",
-    "nodemon": "^3.0.1"
+    "nodemon": "^3.0.1",
+    "supertest": "^6.3.3"
   },
   "jest": {
     "testEnvironment": "node"
