@@ -1,15 +1,19 @@
 const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
-const middleware = require('../utils/middleware')
+const { userExtractor } = require('../utils/middleware')
 
 blogsRouter.get('/', async (request, response) => {
   const blogs = await Blog.find({}).populate('user', { username: 1, name: 1 })
   response.json(blogs)
 })
   
-blogsRouter.post('/', middleware.userExtractor, async (request, response) => {
+blogsRouter.post('/', userExtractor, async (request, response) => {
   const body = request.body
   const user = request.user
+  if (!user) {
+    return response.status(401).json({ error: 'operation not permitted' })
+  }
+
   const blog = new Blog({
     title: body.title,
     author: body.author,
@@ -23,11 +27,16 @@ blogsRouter.post('/', middleware.userExtractor, async (request, response) => {
   response.status(201).json(savedBlog)
 })
 
-blogsRouter.delete('/:id', middleware.userExtractor, async (request, response) => {
+blogsRouter.delete('/:id', userExtractor, async (request, response) => {
   const blog = await Blog.findById(request.params.id)
   const user = request.user
-  if (blog.user._id.toString() === user._id.toString()) {
+
+  if (user && blog.user.toString() === user.id.toString()) {
     await Blog.findByIdAndDelete(request.params.id)
+
+    user.blogs = user.blogs.filter(b => b.toString() !== blog.id.toString() )
+    await user.save()
+
     response.status(204).end()
   } else {
     response.status(401).json({ error: 'Unauthorized' });
